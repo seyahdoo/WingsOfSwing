@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class Event_Manager : Singleton<Event_Manager> {
+public class Event_ManagerV1 : Singleton<Event_ManagerV1> {
 
     //tobe private
     public List<Custom_Event> Events = new List<Custom_Event>();

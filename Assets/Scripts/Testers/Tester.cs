@@ -26,7 +26,7 @@ public class Tester : MonoBehaviour {
         //t[1] = new Tester();
         //Pool<Tester>.ObjectsInPool = t;
         //Pool<Tester>.One.name = "asdasdsa";
-        
+
         
 
 

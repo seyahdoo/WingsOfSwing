@@ -1,10 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class TouchManager : Singleton<TouchManager> {
+public class TouchManager : Singleton<TouchManager>
+{
     ///check all touches and if got a move send it to player!s
 
     protected TouchManager() { }    //guarantee this will be always a singleton only - can't use the constructor!
+
+
 
 
 
@@ -14,6 +17,9 @@ public class TouchManager : Singleton<TouchManager> {
 
     public float DragTreshold = 20;
     public float SwipeTreshold = 40;
+
+    public float TouchTimeout = 1.0f;
+    private float _touchStartTime;
 
     public PlayerController playerController;
 
@@ -43,24 +49,27 @@ public class TouchManager : Singleton<TouchManager> {
 
 
     }
-
-
-
+    
     void TouchStart(Vector2 StartPoint)
     {
         //Debug.Log ("Touch Started at " + StartPoint);
         //Debug.Log( CalculateAreaFromPixels(StartPoint));
         this.StartPoint = StartPoint;
+        //get Touch start time
+        _touchStartTime = Time.time;
     }
 
     //	void TouchHover(Vector2 HoverPoint)
     //	{
     //		//Debug.Log ("Touch Contunies at " + HoverPoint);
     //	}
-
-
+    
     void TouchEnd(Vector2 EndPoint)
     {
+        //Touch time outs if pressed too long
+        if ((Time.time - _touchStartTime) > TouchTimeout)
+            return;
+
         //Debug.Log ("Touch Ends at " + EndPoint);
         var dif = EndPoint - StartPoint;
         if (dif.magnitude < DragTreshold)
@@ -74,8 +83,8 @@ public class TouchManager : Singleton<TouchManager> {
         {
             //then swiped
             //Debug.Log(dif);
-            Debug.Log ("Swiped" + CalculateDirectionFromVector (dif));
-            playerController.Go(CalculateDirectionFromVector(dif));
+            //Debug.Log("Swiped" + CalculateDirectionFromVector(dif));
+            playerController.Swipe(CalculateDirectionFromVector(dif));
         }
     }
 
@@ -126,10 +135,9 @@ public class TouchManager : Singleton<TouchManager> {
         Down = 0,
         Up = 1,
         Left = 2,
-        Right = 3
+        Right = 3,
+        Nowhere = 4
     }
-
-
-
+    
 }
 
