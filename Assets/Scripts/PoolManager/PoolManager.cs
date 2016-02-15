@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class PoolManager : Singleton<PoolManager> {
 
-    public int NewPoolSize = 20;
+    //public int NewPoolSize = 20;
 
     public List<PoolObject> PoolObjects;
 
@@ -14,6 +14,7 @@ public class PoolManager : Singleton<PoolManager> {
         public string Name;
         public GameObject Sample;
         public bool ToBePooled;
+        public int DesiredPoolSize = 20;
         public Pool Pool;
     } 
     
@@ -74,7 +75,7 @@ public class PoolManager : Singleton<PoolManager> {
             if(po.Sample != null)
             {
                 //create a pool
-                po.Pool = CreatePool(po.Sample);
+                po.Pool = CreatePool(po.Sample,po.DesiredPoolSize);
                 //and return from pool.
                 return po.Pool.GetFromPool();
             }
@@ -97,14 +98,14 @@ public class PoolManager : Singleton<PoolManager> {
         return GameObject.CreatePrimitive(PrimitiveType.Cube);
     }
     
-    public Pool CreatePool(GameObject Sample)
+    public Pool CreatePool(GameObject Sample,int Size)
     {
         GameObject go = new GameObject(Sample.name);
         go.transform.parent = this.transform;
         Pool p = go.AddComponent<Pool>();
         p.Original = Sample;
         p.ObjectName = Sample.name;
-        p.InstantiatePool(NewPoolSize);
+        p.InstantiatePool(Size);
         
         return p;
     }
