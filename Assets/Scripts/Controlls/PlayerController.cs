@@ -81,7 +81,7 @@ public class PlayerController : MonoBehaviour {
     }
     void ReturnLane()
     {
-        Debug.Log("returning");
+       // Debug.Log("returning");
         _smoothFollow.TargetTransform = PlacesToBe[0];
         ChargeCount = 0;
         ChargeDirection = TouchManager.Direction.Nowhere;
