@@ -5,14 +5,21 @@ public class PoolMember : MonoBehaviour {
 
     //TODO Write some elegant stuff here.
 
-    [ContextMenuItem("Return to Pool", "returnPoolContextFunction")]
+    public bool InPool;
+
+    [ContextMenuItem("Return to Pool", "ReturnPool")]
+
     public Pool MyPool;
 
-    private void returnPoolContextFunction()
-    {
-        ReturnPool();
-    }
+    //private void returnPoolContextFunction()
+    //{
+    //    ReturnPool();
+    //}
 
+    void Awake()
+    {
+        EventManager.GameOverEvent += OnGameOver;
+    }
 
     public void OnPoolEnter()
     {
@@ -20,12 +27,20 @@ public class PoolMember : MonoBehaviour {
         //StartCoroutine(ReturnToPapaPool());
         
         gameObject.SetActive(false);
+        //EventManager.GameOverEvent -= ReturnPool;
+
+        InPool = true;
     }
 
     public void OnPoolOut()
     {
         transform.parent = null;
         gameObject.SetActive(true);
+
+        //Return to pool on GameOver
+        //EventManager.GameOverEvent += ReturnPool;
+
+        InPool = false;
     }
 
     //void OnDisable()
@@ -38,6 +53,15 @@ public class PoolMember : MonoBehaviour {
     public void ReturnPool()
     {
         MyPool.ReturnOld(gameObject);
+    }
+
+    void OnGameOver()
+    {
+        //Debug.Log("On Game Over");
+
+        if (!InPool)
+            ReturnPool();
+
     }
 
 

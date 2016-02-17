@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+[RequireComponent(typeof(SmoothFollow))]
 public class PlayerController : MonoBehaviour {
 
 
@@ -9,11 +10,11 @@ public class PlayerController : MonoBehaviour {
 
     public float Return_Time = 1.0f;
     
-    public int ChargeCount;
-    public TouchManager.Direction ChargeDirection;
-
     public bool Going;
     public TouchManager.Direction GoDirection;
+
+    public int ChargeCount;
+    public TouchManager.Direction ChargeDirection;
 
     public bool Comboing;
     public TouchManager.Direction ComboDirection = TouchManager.Direction.Nowhere;
@@ -23,19 +24,28 @@ public class PlayerController : MonoBehaviour {
     void Awake()
     {
         _smoothFollow = GetComponent<SmoothFollow>();
-        if (_smoothFollow == null)
-        {
-            Debug.LogWarning("Player needs to have"+
-                "SmoothFollow to go line to line,"+
-                "Please add Smooth Follow to Player object."+
-                "Fixing for now.");
-            _smoothFollow = this.gameObject.AddComponent<SmoothFollow>();
-            _smoothFollow.TargetTransform = PlacesToBe[1];
-            _smoothFollow.MyTransform = this.transform;
-        }
+        //if (_smoothFollow == null)
+        //{
+        //    Debug.LogWarning("Player needs to have"+
+        //        "SmoothFollow to go line to line,"+
+        //        "Please add Smooth Follow to Player object."+
+        //        "Fixing for now.");
+        //    _smoothFollow = this.gameObject.AddComponent<SmoothFollow>();
+        //    _smoothFollow.TargetTransform = PlacesToBe[1];
+        //    _smoothFollow.MyTransform = this.transform;
+        //}
 
         TouchManager.Instance.playerController = this;
-            
+
+        EventManager.GameOverEvent += Stop;
+        EventManager.GameStartEvent += Start;
+
+    }
+
+    void Update()
+    {
+
+        //set animator thingies
     }
 
 	public void Swipe(TouchManager.Direction SwipeDirection)
@@ -143,5 +153,60 @@ public class PlayerController : MonoBehaviour {
     }
 
 
+    public void SetAnimatorVaribles()
+    {
+
+
+    }
+
+    public void Stop()
+    {
+        Immobilized = true;
+        _smoothFollow.Following = false;
+
+        ResetStates();
+    }
+
+    public void Start()
+    {
+        Immobilized = false;
+        _smoothFollow.Following = true;
+
+        ResetStates();
+    }
     
+    public void ResetStates()
+    {
+        Going = false;
+        GoDirection = TouchManager.Direction.Nowhere;
+
+        ChargeCount = 0;
+        ChargeDirection = TouchManager.Direction.Nowhere;
+
+        Comboing = false;
+        ComboDirection = TouchManager.Direction.Nowhere;
+    }
+
+    public void Die()
+    {
+
+        Debug.Log("I died");
+
+        GameManager.Instance.GameOver();
+
+    }
+    
+    void OnTriggerEnter(Collider other)
+    {
+        
+        if(other.tag == "Enemy")
+        {
+            Die();
+        }
+
+
+    }
+
+
+
 }

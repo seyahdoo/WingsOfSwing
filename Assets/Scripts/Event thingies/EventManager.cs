@@ -17,8 +17,7 @@ public class EventManager : Singleton<EventManager> {
 
 
     public delegate void VoidDelegate();
-
-
+    
     /// <summary>
     /// Usage: EventManager.SampleEvent += MethodToSubscribe;
     /// </summary>
@@ -33,10 +32,23 @@ public class EventManager : Singleton<EventManager> {
         //if there is one?
         if (SampleEvent != null)
             SampleEvent();
-
-
+        
     }
-	
+
+    public static event VoidDelegate GameOverEvent;
+    public static void GameOverTrigger()
+    {
+        if (GameOverEvent != null)
+            GameOverEvent();
+    }
+
+    public static event VoidDelegate GameStartEvent;
+    public static void GameStartTrigger()
+    {
+        if (GameStartEvent != null)
+            GameStartEvent();
+    }
+
 
 
 }

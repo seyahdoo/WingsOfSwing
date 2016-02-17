@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-public class SpawnerTemplate : MonoBehaviour {
+public class Spawner : Singleton<Spawner> {
 
     public Transform UpLine;
     public Transform DownLine;
@@ -33,24 +33,32 @@ public class SpawnerTemplate : MonoBehaviour {
         public string LineDown;
         public string LineRight;
         public string LineLeft;
-        //public string Special;
-        
+        //public string Special;  
     }
 
     void Awake()
     {
-        StartSpawner();
+        EventManager.GameOverEvent += StopSpawner;
+        EventManager.GameStartEvent += StartSpawner;
     }
 
     public void StartSpawner()
     {
-        //Debug.Log("Starting Spawn");
+        Debug.Log("Starting Spawn");
 
-        StopCoroutine("Spawner");
-        StartCoroutine("Spawner");
+        StopCoroutine("SpawnCycle");
+        StartCoroutine("SpawnCycle");
     }
 
-    IEnumerator Spawner()
+    public void StopSpawner()
+    {
+        StopCoroutine("SpawnCycle");
+        LevelsIndex = 0;
+        InLevelIndex = 0;
+
+    }
+
+    IEnumerator SpawnCycle()
     {
         //Coroutine
         //start at the beginning of the list
@@ -63,10 +71,16 @@ public class SpawnerTemplate : MonoBehaviour {
         while (true)
         {
             //if Level is finished, go to next level
-            if(InLevelIndex > Levels[LevelsIndex].LevelObjects.Count)
+            if(InLevelIndex >= Levels[LevelsIndex].LevelObjects.Count)
             {
                 InLevelIndex = 0;
                 LevelsIndex++;
+                if(LevelsIndex >= Levels.Count)
+                {
+                    Debug.Log("Levels Ended, looping");
+                    LevelsIndex = 0;
+
+                }
             }
 
             //create stuff
@@ -77,25 +91,25 @@ public class SpawnerTemplate : MonoBehaviour {
 
             if (Up.Length > 2)
             {
-                GameObject go = PoolManager.Instance.Get(Up);
+                GameObject go = PoolManager.Instance.GetGameObject(Up);
                 go.transform.position = UpLine.position;
             }
 
             if (Down.Length > 2)
             {
-                GameObject go = PoolManager.Instance.Get(Down);
+                GameObject go = PoolManager.Instance.GetGameObject(Down);
                 go.transform.position = DownLine.position;
             }
 
             if (Left.Length > 2)
             {
-                GameObject go = PoolManager.Instance.Get(Left);
+                GameObject go = PoolManager.Instance.GetGameObject(Left);
                 go.transform.position = LeftLine.position;
             }
 
             if (Right.Length > 2)
             {
-                GameObject go = PoolManager.Instance.Get(Right);
+                GameObject go = PoolManager.Instance.GetGameObject(Right);
                 go.transform.position = RightLine.position;
             }
 

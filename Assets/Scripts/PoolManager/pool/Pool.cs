@@ -10,7 +10,12 @@ public class Pool : MonoBehaviour {
     /// List of objects in pool waiting to be used.
     /// </summary>
     public List<GameObject> Objects;
-    
+
+    /// <summary>
+    /// List of objects out of the pool, in use.
+    /// </summary>
+    public List<GameObject> ObjectsInUse;
+
     /// <summary>
     /// The original object to pool
     /// </summary>
@@ -21,6 +26,11 @@ public class Pool : MonoBehaviour {
         if(Objects == null)
         {
             Objects = new List<GameObject>();
+        }
+
+        if(ObjectsInUse == null)
+        {
+            ObjectsInUse = new List<GameObject>();
         }
     }
 
@@ -47,6 +57,9 @@ public class Pool : MonoBehaviour {
             ///TODO Maybe we should cashe PoolMember referance?
             //More event thingies YAAAY!!!
             ToReturn.GetComponent<PoolMember>().OnPoolOut();
+
+            //dont lose referance
+            ObjectsInUse.Add(ToReturn);
 
             return ToReturn;
         }
@@ -76,7 +89,12 @@ public class Pool : MonoBehaviour {
         //this "if" is for my compiler :] thanks for all the warnings you give me, i can write code more elegantly.
         //Really thanks... Much thanks..
         if(ToReturn != null)
+        {
+            //dont lose referance
+            ObjectsInUse.Add(ToReturn);
+            
             return ToReturn;
+        }
 
             
         Debug.LogError("::ERROR WE CANT INSTANTIATE A NEW OBJECT IN POOL."+
@@ -166,6 +184,19 @@ public class Pool : MonoBehaviour {
 
     }
     
+    /// <summary>
+    /// Returns all Pool members to pool. 
+    /// </summary>
+    public void ReturnAll()
+    {
+        foreach (GameObject member in ObjectsInUse)
+        {
+            //return object to pool
+            member.GetComponent<PoolMember>().ReturnPool();
+        }
+
+    }
+
 
     //INFINITE LOOP ALERT!!!!!!!!
 

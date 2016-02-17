@@ -44,7 +44,7 @@ public class PoolManager : Singleton<PoolManager> {
         
     }
 	
-	public GameObject Get(string Type)
+	public GameObject GetGameObject(string Type)
     {
         //try to find object in list
         PoolObject po;
@@ -123,6 +123,21 @@ public class PoolManager : Singleton<PoolManager> {
         //else destroy him
         Destroy(ToReturn);
     }
+
+    //public void ReturnAllObjects()
+    //{
+    //    //For every Object type
+    //    foreach (PoolObject po in PoolObjects)
+    //    {
+    //        //if there is a pool
+    //        if (po.Pool != null)
+    //        {
+    //            //return all objects to pool
+    //            po.Pool.ReturnAll();
+    //        }
+    //    }
+    //
+    //}
 
 }
 
